@@ -1,0 +1,6 @@
+*.swp
+*~
+/target/
+/.lein-repl-history
+/.lein-failures
+/.lein-env
