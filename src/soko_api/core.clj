@@ -26,14 +26,12 @@
   :available-media-types ["application/json"]
   :malformed?
   (fn [ctx]
-    (println "Auth header:"
-             (-> ctx (get-in [:request :headers "authorization"])))
     (if-let [[token _]
              (-> ctx
                  (get-in [:request :headers "authorization"])
                  parse-basic-auth)]
-      (do (println "Not malformed:" token) [false {:token token}])
-      (do (println "Malformed") true)))
+      [false {:token token}]
+      true))
   :allowed?
   (fn [ctx]
     (when-let [email (:email (token/lookup (:token ctx)))]
