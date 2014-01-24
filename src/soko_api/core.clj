@@ -52,10 +52,17 @@
     {:record (token/create! (:email ctx))})
   :handle-created (fn [ctx] (:record ctx)))
 
+(defresource token-resource [id]
+  :allowed-methods [:delete]
+  :media-type-available? true  ; Never returns content, so...
+  :exists? (fn [_] (token/lookup id))
+  :delete! (fn [_] (token/invalidate! id))
+  :respond-with-entity? false)
+
 (defroutes app
   (ANY "/whoami" [] whoami-resource)
   (ANY "/token" [] token-list-resource)
-  #_(ANY "/token/:id" [id] (token-resource id)))
+  (ANY "/token/:id" [id] (token-resource id)))
 
 (def handler
   (-> app

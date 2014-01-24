@@ -17,3 +17,6 @@
                 :token (generate)}]
     (jdbc/insert! db :tokens record)
     record))
+
+(defn invalidate! [token-str]
+  (jdbc/delete! db :tokens ["token = ?" token-str]))
