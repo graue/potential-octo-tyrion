@@ -2,7 +2,6 @@
   (:require [liberator.core :refer [resource defresource]]
             [ring.middleware.params :refer [wrap-params]]
             [compojure.core :refer [defroutes ANY]]
-            [ring.util.response :refer [response]]
             [ring.middleware.json :refer [wrap-json-response
                                           wrap-json-params]]
             [ring.util.codec :refer [base64-decode]]
@@ -29,6 +28,7 @@
   (when-let [token (some-> ctx
                            (get-in [:request :headers "authorization"])
                            parse-basic-auth
+                           first  ; Ignore pass; 'username' is token.
                            token/lookup)]
     {:token token}))
 
@@ -36,7 +36,7 @@
   :allowed-methods [:get]
   :available-media-types ["application/json"]
   :allowed? authenticate
-  :handle-ok #(response {:email (get-in % [:token :email])}))
+  :handle-ok (fn [ctx] {:email (get-in ctx [:token :email])}))
 
 (defresource token-list-resource
   :allowed-methods [:post]
