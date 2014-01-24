@@ -2,11 +2,12 @@
   (:require [liberator.core :refer [resource defresource]]
             [ring.middleware.params :refer [wrap-params]]
             [compojure.core :refer [defroutes ANY]]
-            [ring.middleware.json :refer [wrap-json-response
-                                          wrap-json-params]]
+            [compojure.route :as route]
+            [ring.middleware.json :refer [wrap-json-params]]
             [ring.util.codec :refer [base64-decode]]
             [clojure.string :as str]
-            [soko-api.token :as token]))
+            [soko-api.token :as token]
+            [soko-api.persona :as persona]))
 
 (defn parse-basic-auth
   "Parse an HTTP Basic authentication string, returning [user pass] or nil if
@@ -43,13 +44,24 @@
   :available-media-types ["application/json"]
   :malformed?
   (fn [ctx]
-    (if-let [email (get-in ctx [:request :params "email"])]
-      (do (println "email is" email) [false {:email email}])
-      true))
+    (if-let [assertion (get-in ctx [:request :params "assertion"])]
+      [false {:assertion assertion}]
+      [true {:representation {:media-type "application/json"}}]))
+  :handle-malformed (fn [_] {:error "Request must include an assertion"})
+  :allowed?
+  (fn [ctx]
+    (let [assertion-response (persona/verify (:assertion ctx)
+                                             "http://localhost:3000" ; FIXME
+                                             )]
+      (if (persona/valid? assertion-response)
+        [true {:assertion-response assertion-response}]
+        [false {:error (str "Assertion could not be verified. "
+                            (:reason assertion-response))
+                :representation {:media-type "application/json"}}])))
+  :handle-forbidden (fn [ctx] {:error (:error ctx)})
   :post!
   (fn [ctx]
-    (println "email is " (:email ctx))
-    {:record (token/create! (:email ctx))})
+    {:record (token/create! (get-in ctx [:assertion-response :email]))})
   :handle-created (fn [ctx] (:record ctx)))
 
 (defresource token-resource [id]
@@ -62,10 +74,10 @@
 (defroutes app
   (ANY "/whoami" [] whoami-resource)
   (ANY "/token" [] token-list-resource)
-  (ANY "/token/:id" [id] (token-resource id)))
+  (ANY "/token/:id" [id] (token-resource id))
+  (route/files "/static"))
 
 (def handler
   (-> app
       (wrap-params)
-      (wrap-json-response)
       (wrap-json-params)))

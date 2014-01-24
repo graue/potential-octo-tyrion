@@ -7,6 +7,7 @@
                  [ring/ring-jetty-adapter "1.2.1"]
                  [ring/ring-codec "1.0.0"]
                  [ring/ring-json "0.2.0"]
+                 [clj-http "0.7.8"]
                  [org.postgresql/postgresql "9.3-1100-jdbc41"]
                  [org.clojure/java.jdbc "0.3.0-beta1"]
                  [lobos "1.0.0-beta1"]
