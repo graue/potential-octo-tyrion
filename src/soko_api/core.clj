@@ -21,22 +21,22 @@
           (as-> s (re-find #"([^:]*):(.*)" s))
           (subvec 1)))
 
+(defn authenticate
+  "Provide this function under the :allowed? key for any authenticated
+  resource. Adds a :token key to the request map if authentication is
+  successful (the value contains :token and :email keys), else returns nil."
+  [ctx]
+  (when-let [token (some-> ctx
+                           (get-in [:request :headers "authorization"])
+                           parse-basic-auth
+                           token/lookup)]
+    {:token token}))
+
 (defresource whoami-resource
   :allowed-methods [:get]
   :available-media-types ["application/json"]
-  :malformed?
-  (fn [ctx]
-    (if-let [[token _]
-             (-> ctx
-                 (get-in [:request :headers "authorization"])
-                 parse-basic-auth)]
-      [false {:token token}]
-      true))
-  :allowed?
-  (fn [ctx]
-    (when-let [email (:email (token/lookup (:token ctx)))]
-      {:email email}))
-  :handle-ok #(response {:email (:email %)}))
+  :allowed? authenticate
+  :handle-ok #(response {:email (get-in % [:token :email])}))
 
 (defresource token-list-resource
   :allowed-methods [:post]
