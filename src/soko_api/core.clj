@@ -41,11 +41,20 @@
 (defresource token-list-resource
   :allowed-methods [:post]
   :available-media-types ["application/json"]
-  )
+  :malformed?
+  (fn [ctx]
+    (if-let [email (get-in ctx [:request :params "email"])]
+      (do (println "email is" email) [false {:email email}])
+      true))
+  :post!
+  (fn [ctx]
+    (println "email is " (:email ctx))
+    {:record (token/create! (:email ctx))})
+  :handle-created (fn [ctx] (:record ctx)))
 
 (defroutes app
   (ANY "/whoami" [] whoami-resource)
-  #_(ANY "/token" [] token-list-resource)
+  (ANY "/token" [] token-list-resource)
   #_(ANY "/token/:id" [id] (token-resource id)))
 
 (def handler

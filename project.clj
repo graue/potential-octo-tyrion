@@ -10,7 +10,8 @@
                  [org.postgresql/postgresql "9.3-1100-jdbc41"]
                  [org.clojure/java.jdbc "0.3.0-beta1"]
                  [lobos "1.0.0-beta1"]
-                 [environ "0.4.0"]]
+                 [environ "0.4.0"]
+                 [crypto-random "1.1.0"]]
   :plugins [[lein-ring "0.8.8"]
             [lein-environ "0.4.0"]]
   :ring {:handler soko-api.core/handler}
