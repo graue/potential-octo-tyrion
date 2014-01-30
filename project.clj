@@ -19,4 +19,5 @@
   :profiles
   {:dev {:dependencies []
          :env {:soko-db-user "dbuser"
-               :soko-db-table "soko"}}})
+               :soko-db-table "soko"
+               :soko-base-url "http://localhost:3000"}}})

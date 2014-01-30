@@ -7,7 +7,8 @@
             [ring.util.codec :refer [base64-decode]]
             [clojure.string :as str]
             [soko-api.token :as token]
-            [soko-api.persona :as persona]))
+            [soko-api.persona :as persona]
+            [soko-api.config :refer [base-url]]))
 
 (defn parse-basic-auth
   "Parse an HTTP Basic authentication string, returning [user pass] or nil if
@@ -50,9 +51,7 @@
   :handle-malformed (fn [_] {:error "Request must include an assertion"})
   :allowed?
   (fn [ctx]
-    (let [assertion-response (persona/verify (:assertion ctx)
-                                             "http://localhost:3000" ; FIXME
-                                             )]
+    (let [assertion-response (persona/verify (:assertion ctx) base-url)]
       (if (persona/valid? assertion-response)
         [true {:assertion-response assertion-response}]
         [false {:error (str "Assertion could not be verified. "

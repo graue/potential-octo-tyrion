@@ -10,3 +10,5 @@
    (str "//" (get env :soko-db-host "localhost")
         ":" (get env :soko-db-port 5432)
         "/" (get env :soko-db-name "soko"))})
+
+(def base-url (get env :soko-base-url))
