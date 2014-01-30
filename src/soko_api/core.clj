@@ -60,7 +60,9 @@
   :handle-forbidden (fn [ctx] {:error (:error ctx)})
   :post!
   (fn [ctx]
-    {:record (token/create! (get-in ctx [:assertion-response :email]))})
+    (let [token (token/create! (get-in ctx [:assertion-response :email]))]
+      {:record token
+       :location (str base-url "/token/" (:token token))}))
   :handle-created (fn [ctx] (:record ctx)))
 
 (defresource token-resource [id]
