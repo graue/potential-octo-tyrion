@@ -1,4 +1,4 @@
-(ns soko-api.persona
+(ns soko-api.util.persona
   (:require [clj-http.client :as client]))
 
 (defn verify
