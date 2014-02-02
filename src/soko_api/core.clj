@@ -14,7 +14,7 @@
   :allowed-methods [:get]
   :available-media-types ["application/json"]
   :allowed? authenticate
-  :handle-ok (fn [ctx] {:email (get-in ctx [:token :email])}))
+  :handle-ok #(select-keys % [:email]))
 
 (defresource token-list-resource
   :allowed-methods [:post]

@@ -16,12 +16,12 @@
 
 (defn authenticate
   "Provide this function under the :allowed? key for any authenticated
-  resource. Adds a :token key to the request map if authentication is
-  successful (the value contains :token and :email keys), else returns nil."
+  resource. Adds :token and :email keys to the request map if authentication
+  succeeds, else returns nil."
   [ctx]
   (when-let [token (some-> ctx
                            (get-in [:request :headers "authorization"])
                            parse-basic-auth
                            first  ; Ignore pass; 'username' is token.
                            token/lookup)]
-    {:token token}))
+    (select-keys token [:token :email])))
