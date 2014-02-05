@@ -17,14 +17,14 @@
     :builds [{:id "sojoban"
               :source-paths ["src"]
               :compiler {
-                :output-to "sojoban.js"
-                :output-dir "out"
+                :output-to "public/sojoban.js"
+                :output-dir "public/out"
                 :optimizations :none
                 :source-map true}}
              {:id "optimized"
               :source-paths ["src"]
               :compiler {
-                :output-to "sojoban-opt.js"
+                :output-to "public/sojoban-opt.js"
                 :optimizations :advanced
                 :pretty-print false
                 :preamble ["react/react.min.js"]

@@ -1,8 +1,8 @@
-/out
+/.lein-repl-history
+/public/out
+/public/react-*.js
+/public/sojoban.js
+/public/sojoban-opt.js
 /target
-/sojoban.js
-/sojoban-opt.js
 *.swp
 *~
-/react-*.js
-/.lein-repl-history
