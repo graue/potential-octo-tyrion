@@ -3,6 +3,11 @@
 It's Sokoban. It's written in ClojureScript. So it has a J in it.
 
 
+## React dependency
+
+Save react-0.8.0.js (can be the minified version) in the public/ directory.
+
+
 ## Credits
 
 Includes [Yoshio Murase's automatically generated
