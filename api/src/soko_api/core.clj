@@ -52,7 +52,7 @@
   (ANY "/whoami" [] whoami-resource)
   (ANY "/token" [] token-list-resource)
   (ANY "/token/:id" [id] (token-resource id))
-  (route/files "/static"))
+  (route/files "/" {:root "../frontend/public"}))
 
 (def handler
   (-> app
